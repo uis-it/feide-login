@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="${project.groupId}:${project.artifactId}:${project.version}">
+	<bannerLeft>
+		<name>${project.name}</name>
+		<src>http://www.uis.no/images/uis/logo/uis_logo.gif</src>
+		<href>http://www.uis.no</href>
+	</bannerLeft>
+	<bannerRight>
+    <src>http://maven.apache.org/images/maven-small.gif</src>
+  </bannerRight>
+	<body>
+		<menu name="${project.name}">
+			<item name="Introduction" href="index.html"/>
+			<item name="Usage" href="usage.html"/>
+		</menu>
+		<menu ref="reports"/>
+	</body>
+</project>

@@ -1,0 +1,78 @@
+feidelogin.jar – bruk og konfigurasjon
+
+  Biblioteket feidelogin.jar inneholder støtte for Feide-basert pålogging for webapps basert på Servlet 2.5 og for Liferay portal. Dette dokumentet beskriver hvordan man setter opp en webapp til å benytte feidelogin.jar. 
+  
+  Kildekoden for feidelogin.jar befinner seg i 
+  https://source01.uis.no/repos1/portal/medikamentregning/trunk/feidelogin-jar
+   
+  Å sette opp Feide-basert pålogging i en webapp krever disse stegene:
+  
+  [[1]]	Inkluder feidelogin.jar i applikasjonen
+  
+  [[1]]	Lag en properties-fil som definerer innstillinger for Feide-pålogging
+  
+  [[1]]	Konfigurer Feide-spesifikke funksjoner i webappens deployment descriptor
+  
+  []
+  
+  Eksemplene som er brukt på konfigurasjon i dette dokumentet er hentet fra applikasjonen 
+  medikamentregning utviklet sommeren 2010 for UiS. 
+  I eksemplene er applikasjonen installert under context root /medikamentregning på 
+  Tomcat-serveren https://wsapps-test01.uis.no.
+  
+Innstillinger for Feide-pålogging
+  
+  Innstillingene som beskriver hvordan Feide-påloggingen skal skje må defineres inn i en Java properties-fil som kan leses av feidelogin.
+  For pålogging til UiS’ Feide test-server brukes disse innstillingene:
+  WEB-INF/feidelogin.properties:
+  
+---  
+  no.uis.feide.metadata-url=https://lportal-test.uis.no/simplesaml/saml2/idp/metadata.php
+  no.uis.feide.issuer-name=urn:mace:feide.no:services:no.uis.wsapps-test01
+  no.uis.feide.sso.relay-state=https://wsapps-test01.uis.no/medikamentregning/feidelogin
+  no.uis.feide.slo.relay-state=https://wsapps-test01.uis.no/medikamentregning/feidelogout
+  no.uis.feide.idp.logout=https://lportal-test.uis.no/simplesaml/saml2/idp/initSLO.php
+---
+
+Feide-funksjoner i web.xml
+
+  Feide-påloggingen krever definisjon av et filter og en servlet i webapplikasjonen. I tillegg må det defineres en initparameter som peker til innstillingene for Feide-pålogging (se over). Disse innstillingene defineres i deployment descriptoren for webapplikasjonen, WEB-INF/web.xml:
+
++---  
+	<context-param>
+		<param-name>settingsFile</param-name>
+		<param-value>WEB-INF/feidelogin.properties</param-value>
+	</context-param>
+	<filter>
+		<filter-name>feideFilter</filter-name>
+		<filter-class>no.uis.portal.feidelogin.web.FeideFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>feideFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+	<servlet>
+		<description>
+		</description>
+		<display-name>FeideAuthenticator</display-name>
+		<servlet-name>FeideAuthenticator</servlet-name>
+		<servlet-class>no.uis.portal.feidelogin.web.FeideAuthenticator</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>FeideAuthenticator</servlet-name>
+		<url-pattern>/feidelogin</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>FeideAuthenticator</servlet-name>
+		<url-pattern>/feidelogout</url-pattern>
+	</servlet-mapping>
++---  
+	
+  Med disse innstillingene på plass vil alle forsøk på å hente ressurser fra webapplikasjonen 
+  først bli testet av FeideFilter for å sikre at brukeren er logget inn. Hvis dette ikke er tilfelle 
+  vil brukeren bli videresendt til /feidelogin som håndteres av FeideAuthenticator. 
+  Denne vil videresende brukeren til Feide for pålogging. 
+  Når Feide har klart å logge brukeren inn vil brukeren bli returnert til /feidelogin 
+  som verifiserer dataene returnert fra Feide, registrerer brukeren som pålogget, 
+  og returnerer brukeren til den ressursen han opprinnelig prøvde å få tak i.
