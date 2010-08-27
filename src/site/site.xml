@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="${project.groupId}:${project.artifactId}:${project.version}">
+<project
+  xmlns="http://maven.apache.org/DECORATION/1.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/DECORATION/1.0.0 http://maven.apache.org/xsd/decoration-1.0.0.xsd" 
+  name="${project.groupId}:${project.artifactId}:${project.version}">
 	<bannerLeft>
-		<name>${project.name}</name>
-		<src>http://www.uis.no/images/uis/logo/uis_logo.gif</src>
-		<href>http://www.uis.no</href>
+		<name>${project.groupId}:${project.artifactId}</name>
 	</bannerLeft>
 	<bannerRight>
-    <src>http://maven.apache.org/images/maven-small.gif</src>
+		<src>http://www.uis.no/images/uis/logo/uis_logo.gif</src>
+		<href>http://www.uis.no</href>
   </bannerRight>
 	<body>
 		<menu name="${project.name}">

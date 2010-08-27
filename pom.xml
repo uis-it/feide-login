@@ -11,6 +11,36 @@
 		<inceptionYear>2010</inceptionYear>
 		<url>http://source01.uis.no/maven-site/${project.groupId}/${project.artifactId}/${project.version}</url>
 
+	<developers>
+		<developer>
+			<id>bjorn.larsen</id>
+			<name>Bjørn Hell Larsen</name>
+			<organization>Ergo Group</organization>
+			<roles>
+				<role>developer</role>
+			</roles>
+		</developer>
+		<developer>
+			<id>2904630</id>
+			<name>Martin Goldhahn</name>
+			<organization>Universitetet i Stavanger</organization>
+			<email>martin.goldhahn@uis.no</email>
+			<organizationUrl>http://www.uis.no</organizationUrl>
+			<roles>
+				<role>developer</role>
+				<role>architect</role>
+			</roles>
+		</developer>
+	</developers>
+	<contributors>
+		<contributor>
+			<name>Petter Mordt</name>
+			<organization>UiS</organization>
+			<roles>
+				<role>Flash developer</role>
+			</roles>
+		</contributor>
+	</contributors>
 		<parent>
 				<groupId>no.uis</groupId>
 				<artifactId>parent-pom</artifactId>
