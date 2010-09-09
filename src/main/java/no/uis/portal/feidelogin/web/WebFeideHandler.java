@@ -38,14 +38,14 @@ public class WebFeideHandler extends FeideHandler {
 
 	private static volatile WebFeideHandler singleton;
 
-	public static WebFeideHandler getInstance() {
+	public static WebFeideHandler getInstance(HttpServletRequest req) {
 		WebFeideHandler fh = singleton;
 		if (fh == null) {
 			synchronized(WebFeideHandler.class) {
 				fh = singleton;
 				if (fh == null) {
 					fh = new WebFeideHandler();
-					fh.initialize();
+					fh.initialize(req);
 					singleton = fh;
 				}
 			}
@@ -53,20 +53,10 @@ public class WebFeideHandler extends FeideHandler {
 		return fh;
 	}
 
-	public static boolean hasInstance() {
-		FeideHandler fh = singleton;
-		return fh != null;
-	}
-
 	private WebFeideHandler() {
 	}
 
-	/* (non-Javadoc)
-	 * @see no.uis.portal.feidelogin.FeideHandler#handleLogin(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
-	 */
 	public String handleLogin(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		
-		loadProperties(request);
 		
 		if (isSAMLResponse(request)) {
 			// Login response
@@ -97,7 +87,14 @@ public class WebFeideHandler extends FeideHandler {
 		}
 	}
 
-	private void loadProperties(HttpServletRequest request) {
+	
+	@Override
+  protected void initialize(HttpServletRequest req) {
+	  loadProperties(req);
+    super.initialize(req);
+  }
+
+  private void loadProperties(HttpServletRequest request) {
 		HttpSession session = request.getSession();
 		if (session == null) {
 			logWarn("Could not load settings, no session");

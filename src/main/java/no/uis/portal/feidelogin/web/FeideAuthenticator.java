@@ -61,7 +61,7 @@ public class FeideAuthenticator extends HttpServlet implements Servlet {
 			log.debug("(end classpath)");
 			
 		}
-		WebFeideHandler fh = WebFeideHandler.getInstance();
+		WebFeideHandler fh = WebFeideHandler.getInstance(req);
 		try {
 			String userId = fh.handleLogin(req, resp);
 			if (userId != null) {

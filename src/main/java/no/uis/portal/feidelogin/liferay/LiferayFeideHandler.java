@@ -40,7 +40,7 @@ public class LiferayFeideHandler extends FeideHandler {
 				fh = singleton;
 				if (fh == null) {
 					fh = new LiferayFeideHandler();
-					fh.initialize();
+					fh.initialize(null);
 					singleton = fh;
 				}
 			}

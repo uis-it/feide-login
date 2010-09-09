@@ -59,7 +59,7 @@ public abstract class FeideHandler {
 	public FeideHandler() {
 	}
 
-	protected  void initialize() {
+	protected  void initialize(HttpServletRequest req) {
 		try {
 			DefaultBootstrap.bootstrap();
 		} catch (ConfigurationException e) {
