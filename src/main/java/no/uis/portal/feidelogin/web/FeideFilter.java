@@ -1,8 +1,6 @@
 package no.uis.portal.feidelogin.web;
 
 import java.io.IOException;
-import java.net.URL;
-import java.net.URLClassLoader;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -13,8 +11,6 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
-import no.uis.portal.feidelogin.FeideHandler;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
