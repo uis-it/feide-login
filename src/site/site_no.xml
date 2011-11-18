@@ -13,9 +13,15 @@
   </bannerRight>
 	<body>
 		<menu name="${project.name}">
-			<item name="Introduction" href="index.html"/>
-			<item name="Usage" href="usage.html"/>
+			<item name="Oversikt" href="index.html"/>
+			<item name="Bruksanvisning" href="usage.html"/>
 		</menu>
 		<menu ref="reports"/>
 	</body>
+	
+	<skin>
+		<groupId>no.uis.maven</groupId>
+		<artifactId>uis-skin</artifactId>
+		<version>1.0.7</version>
+	</skin>
 </project>

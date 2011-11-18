@@ -2,8 +2,7 @@ feidelogin.jar – bruk og konfigurasjon
 
   Biblioteket feidelogin.jar inneholder støtte for Feide-basert pålogging for webapps basert på Servlet 2.5 og for Liferay portal. Dette dokumentet beskriver hvordan man setter opp en webapp til å benytte feidelogin.jar. 
   
-  Kildekoden for feidelogin.jar befinner seg i 
-  https://source01.uis.no/repos1/portal/medikamentregning/trunk/feidelogin-jar
+  Se <a href="source-repository.html"> for informasjon om hvordan å få tak i kildekoden.
    
   Å sette opp Feide-basert pålogging i en webapp krever disse stegene:
   
