@@ -4,8 +4,10 @@
  */
 package no.uis.portal.feidelogin.web;
 
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -106,15 +108,24 @@ public class WebFeideHandler extends FeideHandler {
 			logInfo("No settingsFile init parameter found, proceeding with default settings");
 			return;
 		}
+		InputStream settingsStream = null;
 		try {
-			props.load(context.getResourceAsStream(settingsFile));
+			settingsStream = context.getResourceAsStream(settingsFile);
+			if (settingsStream == null) {
+			  settingsStream = new FileInputStream(settingsFile);
+			}
+      props.load(settingsStream);
 			logInfo("Settings loaded from "+settingsFile);
-		} catch (FileNotFoundException e) {
+		} catch (Exception e) {
 			logWarn("Could not load settings from "+settingsFile+": "+e.getMessage());
-			return;
-		} catch (IOException e) {
-			logWarn("Could not load settings from "+settingsFile+": "+e.getMessage());
-			return;
+		} finally {
+		  if (settingsStream != null) {
+		    try {
+          settingsStream.close();
+        } catch(IOException e) {
+          logWarn(e);
+        }
+		  }
 		}
 		
 	}
