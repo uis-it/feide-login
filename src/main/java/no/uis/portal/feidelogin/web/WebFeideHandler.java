@@ -101,7 +101,7 @@ public class WebFeideHandler extends FeideHandler {
 			return;
 		}
 		ServletContext context = session.getServletContext();
-		String settingsFile = context.getInitParameter("settingsFile");
+		String settingsFile = context.getInitParameter("FEIDEsettingsFile");
 		if (settingsFile == null) {
 			logInfo("No settingsFile init parameter found, proceeding with default settings");
 			return;

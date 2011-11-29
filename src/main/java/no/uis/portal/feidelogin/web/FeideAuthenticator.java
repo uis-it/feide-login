@@ -21,45 +21,37 @@ public class FeideAuthenticator extends HttpServlet implements Servlet {
 
 	private static final long serialVersionUID = -4295079485421401479L;
 
-	protected void doPost(HttpServletRequest req,
-			HttpServletResponse resp) throws ServletException, IOException {
-
-		log.info("received a POST at "+req.getServletPath());
-		doGet(req, resp);
-		
-	}
-	
-	protected void doGet(HttpServletRequest req,
-			HttpServletResponse resp) throws ServletException, IOException {
+	@Override
+	protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		String servletPath = req.getServletPath();
 		if (servletPath.equals(Constants.AUTH_LOGIN_SERVLET)) {
 			handleLogin(req, resp);
-			return;
-		}
 		
-		if (servletPath.equals(Constants.AUTH_LOGOUT_SERVLET)) {
+		} else if (servletPath.equals(Constants.AUTH_LOGOUT_SERVLET)) {
 			handleLogout(req, resp);
-			return;
-		}
 		
-		log.error("FeideAuthenticator.doGet: Called by unknown servlet path: "+servletPath);
+		} else { 
+		  log.warn("FeideAuthenticator.doGet: Called by unknown servlet path: "+servletPath);
+		}
 	}
 
 	private void handleLogin(HttpServletRequest req, HttpServletResponse resp) throws ServletException {
 		log.debug("FeideAuthenticator.handleLogin: called");
 
-		ClassLoader classLoader = this.getClass().getClassLoader();
-		if (classLoader == null) {
-			log.debug("could not get application class loader");
-		} else {
-			log.debug("Classpath:");
-			URL[] urls = ((URLClassLoader)classLoader).getURLs();
-
-			for(int i=0; i< urls.length; i++) {
-				log.debug(urls[i].getFile());
-			}    
-			log.debug("(end classpath)");
-			
+		if (log.isDebugEnabled()) {
+		  ClassLoader classLoader = this.getClass().getClassLoader();
+  		if (classLoader == null) {
+  			log.debug("could not get application class loader");
+  		} else {
+  			log.debug("Classpath:");
+  			URL[] urls = ((URLClassLoader)classLoader).getURLs();
+  
+  			for(int i=0; i< urls.length; i++) {
+  				log.debug(urls[i].getFile());
+  			}    
+  			log.debug("(end classpath)");
+  			
+  		}
 		}
 		WebFeideHandler fh = WebFeideHandler.getInstance(req);
 		try {
