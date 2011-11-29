@@ -1,9 +1,8 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 		<modelVersion>4.0.0</modelVersion>
 		<groupId>no.uis.feidelogin</groupId>
 		<artifactId>feidelogin</artifactId>
-		<version>1.0.3-SNAPSHOT</version>
+		<version>1.0.3</version>
 
 		<name>feidelogin-jar</name>
 		<description>FEIDE Login Library</description>
@@ -49,9 +48,9 @@
 		</contributors>
 
 		<scm>
-				<connection>scm:svn:http://source01.uis.no/repos/portal/medikamentregning/feidelogin-jar/trunk</connection>
-				<developerConnection>scm:svn:https://source01.uis.no/repos/portal/medikamentregning/feidelogin-jar/trunk</developerConnection>
-				<url>http://source01.uis.no/repos/portal/medikamentregning/feidelogin-jar/trunk</url>
+				<connection>scm:svn:http://source01.uis.no/repos/portal/medikamentregning/feidelogin-jar/tags/feidelogin-1.0.3</connection>
+				<developerConnection>scm:svn:https://source01.uis.no/repos/portal/medikamentregning/feidelogin-jar/tags/feidelogin-1.0.3</developerConnection>
+				<url>http://source01.uis.no/repos/portal/medikamentregning/feidelogin-jar/tags/feidelogin-1.0.3</url>
 		</scm>
 
 		<properties>
