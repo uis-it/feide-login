@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.zip.Deflater;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -59,7 +60,7 @@ public abstract class FeideHandler {
 	public FeideHandler() {
 	}
 
-	protected  void initialize(HttpServletRequest req) {
+	protected  void initialize(ServletContext context) {
 		try {
 			DefaultBootstrap.bootstrap();
 		} catch (ConfigurationException e) {

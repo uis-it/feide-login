@@ -5,6 +5,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 
 import javax.servlet.Servlet;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -20,47 +21,44 @@ public class FeideAuthenticator extends HttpServlet implements Servlet {
 	private static Log log = LogFactory.getLog(FeideAuthenticator.class);
 
 	private static final long serialVersionUID = -4295079485421401479L;
+	
+	private WebFeideHandler feideHandler;
+	private String feideLogoutPath = Constants.FEIDE_LOGOUT_PATH_DEFAULT;
+	private String feideLoginPath = Constants.FEIDE_LOGIN_PATH_DEFAULT;
 
 	@Override
+  public void init() throws ServletException {
+	  ServletContext servletContext = getServletContext();
+    feideHandler = new WebFeideHandler(servletContext);
+	  String param = servletContext.getInitParameter(Constants.PARAM_FEIDE_LOGIN_PATH);
+	  if (param != null) {
+	    feideLoginPath = param;
+	  }
+	  param = servletContext.getInitParameter("feideLogoutPath");
+	  if (param != null) {
+	    feideLogoutPath = param;
+	  }
+  }
+
+  @Override
 	protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		String servletPath = req.getServletPath();
-		if (servletPath.equals(Constants.AUTH_LOGIN_SERVLET)) {
+		if (servletPath.equals(this.feideLoginPath)) {
 			handleLogin(req, resp);
 		
-		} else if (servletPath.equals(Constants.AUTH_LOGOUT_SERVLET)) {
+		} else if (servletPath.equals(this.feideLogoutPath)) {
 			handleLogout(req, resp);
 		
 		} else { 
-		  log.warn("FeideAuthenticator.doGet: Called by unknown servlet path: "+servletPath);
+		  log.warn("FeideAuthenticator.service: Called by unknown servlet path: "+servletPath);
 		}
 	}
 
 	private void handleLogin(HttpServletRequest req, HttpServletResponse resp) throws ServletException {
 		log.debug("FeideAuthenticator.handleLogin: called");
 
-		if (log.isDebugEnabled()) {
-		  ClassLoader classLoader = this.getClass().getClassLoader();
-  		if (classLoader == null) {
-  			log.debug("could not get application class loader");
-  		} else {
-  			log.debug("Classpath:");
-  			URL[] urls = ((URLClassLoader)classLoader).getURLs();
-  
-  			for(int i=0; i< urls.length; i++) {
-  				log.debug(urls[i].getFile());
-  			}    
-  			log.debug("(end classpath)");
-  			
-  		}
-		}
-		WebFeideHandler fh = WebFeideHandler.getInstance(req);
 		try {
-			String userId = fh.handleLogin(req, resp);
-			if (userId != null) {
-				req.getSession().setAttribute(FeideHandler.class.getName(), fh);
-				req.getSession().setAttribute(Constants.USER_ID_ATTRIBUTE, userId);
-				log.info("FeideAuthenticator.handleLogin: Logged in as "+userId);
-			}
+			feideHandler.handleLogin(req, resp);
 		} catch (Exception e) {
 			throw new ServletException(e);
 		}
@@ -69,6 +67,7 @@ public class FeideAuthenticator extends HttpServlet implements Servlet {
 	private void handleLogout(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		log.debug("FeideAuthenticator.handleLogout: called");
 		HttpSession session = req.getSession(false);
+
 		WebFeideHandler fh = null;
 		if (session != null)
 			fh = (WebFeideHandler)session.getAttribute(FeideHandler.class.getName());
@@ -81,7 +80,7 @@ public class FeideAuthenticator extends HttpServlet implements Servlet {
 		}
 
 		try {
-			fh.handleLogout(req, resp);
+			feideHandler.handleLogout(req, resp);
 		} catch (Exception e) {
 			throw new ServletException(e);
 		}

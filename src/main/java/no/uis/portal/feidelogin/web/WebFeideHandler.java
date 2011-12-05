@@ -26,39 +26,23 @@ public class WebFeideHandler extends FeideHandler {
 	
 	private static Properties props = new Properties();
 	
-	static {
-		// Hardcoded default values - enter your own in a properties file and point to it
-		// with init parameter "settingsFile" in the deployment descriptor
-		props.put("no.uis.feide.metadata-url", "https://lportal-test.uis.no/simplesaml/saml2/idp/metadata.php");
-		props.put("no.uis.feide.issuer-name", "urn:mace:feide.no:services:no.uis.wsapps-test01");
-		props.put("no.uis.feide.sso.relay-state", "https://wsapps-test01.uis.no/medikamentregning/feidelogin");
-		props.put("no.uis.feide.slo.relay-state", "https://wsapps-test01.uis.no/medikamentregning/feidelogout");
-		props.put("no.uis.feide.idp.logout", "https://lportal-test.uis.no/simplesaml/saml2/idp/initSLO.php");
-	}
+//	static {
+//		// Hardcoded default values - enter your own in a properties file and point to it
+//		// with init parameter "settingsFile" in the deployment descriptor
+//		props.put("no.uis.feide.metadata-url", "https://lportal-test.uis.no/simplesaml/saml2/idp/metadata.php");
+//		props.put("no.uis.feide.issuer-name", "urn:mace:feide.no:services:no.uis.wsapps-test01");
+//		props.put("no.uis.feide.sso.relay-state", "https://wsapps-test01.uis.no/medikamentregning/feidelogin");
+//		props.put("no.uis.feide.slo.relay-state", "https://wsapps-test01.uis.no/medikamentregning/feidelogout");
+//		props.put("no.uis.feide.idp.logout", "https://lportal-test.uis.no/simplesaml/saml2/idp/initSLO.php");
+//	}
 	
 	private static Log log = LogFactory.getLog(WebFeideHandler.class);
 
-	private static volatile WebFeideHandler singleton;
-
-	public static WebFeideHandler getInstance(HttpServletRequest req) {
-		WebFeideHandler fh = singleton;
-		if (fh == null) {
-			synchronized(WebFeideHandler.class) {
-				fh = singleton;
-				if (fh == null) {
-					fh = new WebFeideHandler();
-					fh.initialize(req);
-					singleton = fh;
-				}
-			}
-		}
-		return fh;
+	public WebFeideHandler(ServletContext context) {
+	  initialize(context);
 	}
 
-	private WebFeideHandler() {
-	}
-
-	public String handleLogin(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public void handleLogin(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		
 		if (isSAMLResponse(request)) {
 			// Login response
@@ -66,43 +50,41 @@ public class WebFeideHandler extends FeideHandler {
 
 			if (!attrs.containsKey(Constants.FEIDE_USER_ID_ATTRIBUTE)) {
 				logError("invalid login response, no "+Constants.FEIDE_USER_ID_ATTRIBUTE+" returned");
-				return null;
+				return;
 			}
 			
 			String userId = attrs.get(Constants.FEIDE_USER_ID_ATTRIBUTE).get(0);
+
+      if (userId != null) {
+        request.getSession().setAttribute(FeideHandler.class.getName(), this);
+        request.getSession().setAttribute(Constants.USER_ID_ATTRIBUTE, userId);
+        log.info("FeideAuthenticator.handleLogin: Logged in as "+userId);
+        request.getSession().setAttribute(Constants.FEIDE_ATTRIBUTES, attrs);
+      }
 			
 			logInfo("handleLoginResponse returned "+attrs);
 			String url = (String) request.getSession().getAttribute("originalRequest");
-			if (url == null)
-			{
+			if (url == null) {
 				logWarn("Login successful, but don't know where to redirect - defaulting to context path");
 				// Go to root
 				url = request.getContextPath();
 			}
 			logInfo("Successful login, redirecting user back to "+url);
 			response.sendRedirect(url);
-			return userId;
 		} else {
 			// Login request
 			sendLoginRequest(request, response);
-			return null;
 		}
 	}
 
 	
 	@Override
-  protected void initialize(HttpServletRequest req) {
-	  loadProperties(req);
-    super.initialize(req);
+  protected void initialize(ServletContext context) {
+	  loadProperties(context);
+    super.initialize(context);
   }
 
-  private void loadProperties(HttpServletRequest request) {
-		HttpSession session = request.getSession();
-		if (session == null) {
-			logWarn("Could not load settings, no session");
-			return;
-		}
-		ServletContext context = session.getServletContext();
+  private void loadProperties(ServletContext context) {
 		String settingsFile = context.getInitParameter("FEIDEsettingsFile");
 		if (settingsFile == null) {
 			logInfo("No settingsFile init parameter found, proceeding with default settings");
@@ -117,7 +99,8 @@ public class WebFeideHandler extends FeideHandler {
       props.load(settingsStream);
 			logInfo("Settings loaded from "+settingsFile);
 		} catch (Exception e) {
-			logWarn("Could not load settings from "+settingsFile+": "+e.getMessage());
+			logError("Could not load settings from "+settingsFile+": "+e.getMessage());
+			throw new IllegalArgumentException(e);
 		} finally {
 		  if (settingsStream != null) {
 		    try {
